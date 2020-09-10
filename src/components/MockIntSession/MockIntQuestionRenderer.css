@@ -1,0 +1,13 @@
+/* Wrap the code text in the question parsed from markdown */ 
+pre code {
+  white-space: pre-wrap;
+  font-size: 13px !important;
+  padding: 5px 5px !important;
+}
+
+/* Styling for code (``) that's inside markdown lists */
+ul > li > code {
+  white-space: pre-wrap;
+  font-size: 13px !important;
+  padding: 3px 3px !important;
+}

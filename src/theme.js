@@ -10,7 +10,7 @@ const mockintTheme = {
       800: "#153e75",
       700: "#2a69ac"
     }
-  }
+  },
 };
 
 export default mockintTheme;
