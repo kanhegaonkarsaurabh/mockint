@@ -1,5 +1,12 @@
-import React from "react";
-import { Box, Flex, Text, Button, Stack, PseudoBox } from "@chakra-ui/core";
+import React from 'react';
+import {
+  Box,
+  Flex,
+  Text,
+  Button,
+  Stack,
+  PseudoBox,
+} from '@chakra-ui/core';
 
 const MenuItems = (props) => {
   const { children, isLast, ...rest } = props;
@@ -33,13 +40,18 @@ const Header = (props) => {
       <Flex align="center"></Flex>
 
       <Box
-        display={{ base: show ? "block" : "none", md: "block" }}
-        flexBasis={{ base: "100%", md: "auto" }}
+        display={{ base: show ? 'block' : 'none', md: 'block' }}
+        flexBasis={{ base: '100%', md: 'auto' }}
       >
         <Flex
-          align={["center", "center", "center", "center"]}
-          justify={["center", "space-between", "flex-end", "flex-end"]}
-          direction={["column", "row", "row", "row"]}
+          align={['center', 'center', 'center', 'center']}
+          justify={[
+            'center',
+            'space-between',
+            'flex-end',
+            'flex-end',
+          ]}
+          direction={['column', 'row', 'row', 'row']}
           pt={[4, 4, 0, 0]}
         >
           <MenuItems>About</MenuItems>
