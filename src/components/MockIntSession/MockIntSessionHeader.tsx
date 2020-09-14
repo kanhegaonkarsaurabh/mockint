@@ -1,40 +1,34 @@
 import * as React from 'react';
+import { Flex, Box, Heading } from '@chakra-ui/core';
+import Timer from '../Timer';
 
-export default function MockIntSessionHeader() {
+type IProps = {
+  sessionName: string;
+};
+
+export default function MockIntSessionHeader(props: IProps) {
   return (
     <Flex
-      as="nav"
       align="center"
       justify="space-between"
       wrap="wrap"
       w="100%"
-      mb={8}
-      p={8}
-      {...props}
+      p={4}
+      border="1px"
+      borderColor="gray.500"
+      mb={2}
     >
-      <Flex align="center"></Flex>
-
-      <Box
-        display={{ base: show ? 'block' : 'none', md: 'block' }}
-        flexBasis={{ base: '100%', md: 'auto' }}
+      <Heading as="h3" size="lg">
+        {props.sessionName}
+      </Heading>
+      <Flex
+        align={['center', 'center', 'center', 'center']}
+        justify={['center', 'space-between', 'flex-end', 'flex-end']}
+        direction={['column', 'row', 'row', 'row']}
+        pt={[4, 4, 0, 0]}
       >
-        <Flex
-          align={['center', 'center', 'center', 'center']}
-          justify={[
-            'center',
-            'space-between',
-            'flex-end',
-            'flex-end',
-          ]}
-          direction={['column', 'row', 'row', 'row']}
-          pt={[4, 4, 0, 0]}
-        >
-          <MenuItems>About</MenuItems>
-          <Button size="sm" rounded="md">
-            Create Account
-          </Button>
-        </Flex>
-      </Box>
+        <Timer timeInSeconds={10} />
+      </Flex>
     </Flex>
   );
 }
