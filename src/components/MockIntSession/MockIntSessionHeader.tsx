@@ -1,5 +1,6 @@
-import * as React from 'react';
+import React, { useContext } from 'react';
 import { Flex, Box, Heading } from '@chakra-ui/core';
+import EventEmitterContext from './EventEmitterContext';
 import Timer from '../Timer';
 
 type IProps = {
@@ -7,6 +8,12 @@ type IProps = {
 };
 
 export default function MockIntSessionHeader(props: IProps) {
+  const eventEmitter = useContext(EventEmitterContext);
+
+  const onMockIntSessionEnd = (): void => {
+    eventEmitter.emit('mockIntSessionEnd', {});
+  };
+
   return (
     <Flex
       align="center"
@@ -27,7 +34,7 @@ export default function MockIntSessionHeader(props: IProps) {
         direction={['column', 'row', 'row', 'row']}
         pt={[4, 4, 0, 0]}
       >
-        <Timer timeInSeconds={10} />
+        <Timer timeInSeconds={10} onTimerEnd={onMockIntSessionEnd} />
       </Flex>
     </Flex>
   );

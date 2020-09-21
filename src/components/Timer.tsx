@@ -3,6 +3,7 @@ import { Text, Flex, Button } from '@chakra-ui/core';
 
 type TimerProps = {
   timeInSeconds: number;
+  onTimerEnd: () => void;
 };
 
 const formatTime = (timeInSec: number): string => {
@@ -13,10 +14,10 @@ const formatTime = (timeInSec: number): string => {
   return `${getMinutes} : ${getSeconds}`;
 };
 
-const Timer = ({ timeInSeconds }: TimerProps) => {
+const Timer = ({ timeInSeconds, onTimerEnd }: TimerProps) => {
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
-  const [hasSessionEnded, setHasSessionEnded] = useState(false);
+  const [hasTimerEnded, sethasTimerEnded] = useState(false);
   const [
     timerInterval,
     setTimerInterval,
@@ -36,14 +37,16 @@ const Timer = ({ timeInSeconds }: TimerProps) => {
     };
 
     // if time limit recahed, end the session
-    if (hasSessionEnded) {
+    if (hasTimerEnded) {
+      onTimerEnd();
+      
       if (timerInterval == null) {
         return;
       }
 
       clearInterval(timerInterval);
       setTimerInterval(null);
-      setHasSessionEnded(true);
+      sethasTimerEnded(true);
       setIsActive(false);
       return timerCleanupFn;
     }
@@ -63,18 +66,18 @@ const Timer = ({ timeInSeconds }: TimerProps) => {
 
       clearInterval(timerInterval);
       setTimerInterval(null);
-      setHasSessionEnded(true);
+      sethasTimerEnded(true);
       setIsActive(false);
       return timerCleanupFn;
     }
 
     // cleanup fn to avoid memory leak once the component unmounts
     return timerCleanupFn;
-  }, [isActive, hasSessionEnded]);
+  }, [isActive, hasTimerEnded]);
 
   // session is now over
-  if (!hasSessionEnded && timeInSeconds === seconds) {
-    setHasSessionEnded(true);
+  if (!hasTimerEnded && timeInSeconds === seconds) {
+    sethasTimerEnded(true);
   }
 
   return (
@@ -85,9 +88,9 @@ const Timer = ({ timeInSeconds }: TimerProps) => {
       <Button
         variantColor={isActive ? 'red' : 'green'}
         onClick={toggle}
-        isDisabled={hasSessionEnded}
+        isDisabled={hasTimerEnded}
       >
-        {hasSessionEnded
+        {hasTimerEnded
           ? 'Session Ended'
           : isActive
           ? 'End Session'
