@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-// import MockIntSession from './components/MockIntSession/MockIntSession';
+// import MockIntSessionWhiteboard from './components/MockIntSession/MockIntSessionWhiteboard';
 import App from "./App";
 
 const rootElement = document.getElementById("root");

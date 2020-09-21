@@ -8,6 +8,7 @@ import './MockIntSession.css';
 import { MockIntQuestionRenderer } from './MockIntQuestionRenderer';
 import mockQuestion from './mockQuestion.md';
 import MockIntSessionHeader from './MockIntSessionHeader';
+import MockIntSessionWhiteboard from './MockIntSessionWhiteboard';
 import MockIntSessionEditor from './MockIntSessionEditor';
 import EventEmitterContext from './EventEmitterContext';
 
@@ -26,22 +27,23 @@ const MockIntSession: React.FunctionComponent<{}> = () => {
 
   return (
     <Flex direction="column">
-        <MockIntSessionHeader sessionName="My-Awesome-Session" />
-        <SplitPaneWrapper>
-          <SplitPane
-            split="vertical"
-            minSize={300}
-            defaultSize={300}
-            className="primary"
-            allowResize={true}
-            primary="first"
-            pane1Style={{ overflowY: 'auto' }} // to get scrollable questions
-          >
-            <MockIntQuestionRenderer questionAsMdString={question} />
-            <MockIntSessionEditor language="javascript" />
-          </SplitPane>
-        </SplitPaneWrapper>
-      </Flex>
+      <MockIntSessionHeader sessionName="My-Awesome-Session" />
+      <SplitPaneWrapper>
+        <SplitPane
+          split="vertical"
+          minSize={300}
+          defaultSize={300}
+          className="primary"
+          allowResize={true}
+          primary="first"
+          pane1Style={{ overflowY: 'auto' }} // to get scrollable questions
+        >
+          <MockIntQuestionRenderer questionAsMdString={question} />
+          <MockIntSessionWhiteboard />
+          {/* <MockIntSessionEditor language="javascript" /> */}
+        </SplitPane>
+      </SplitPaneWrapper>
+    </Flex>
   );
 };
 

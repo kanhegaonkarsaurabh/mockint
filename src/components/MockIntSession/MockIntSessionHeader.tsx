@@ -3,7 +3,7 @@ import { Flex, Box, Heading } from '@chakra-ui/core';
 import EventEmitterContext from './EventEmitterContext';
 import Timer from '../Timer';
 
-type IProps = {
+interface IProps {
   sessionName: string;
 };
 
