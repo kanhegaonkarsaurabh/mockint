@@ -3,6 +3,13 @@ import SplitPane from 'react-split-pane';
 import { jsx } from '@emotion/core';
 import styled from '@emotion/styled';
 import { Flex, Box, Heading } from '@chakra-ui/core';
+import {
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+} from '@chakra-ui/core';
 
 import './MockIntSession.css';
 import { MockIntQuestionRenderer } from './MockIntQuestionRenderer';
@@ -27,7 +34,10 @@ const MockIntSession: React.FunctionComponent<{}> = () => {
 
   return (
     <Flex direction="column">
-      <MockIntSessionHeader sessionName="My-Awesome-Session" />
+      <MockIntSessionHeader
+        sessionName="My-Awesome-Session"
+        sessionLanguage="javascript"
+      />
       <SplitPaneWrapper>
         <SplitPane
           split="vertical"
@@ -39,8 +49,8 @@ const MockIntSession: React.FunctionComponent<{}> = () => {
           pane1Style={{ overflowY: 'auto' }} // to get scrollable questions
         >
           <MockIntQuestionRenderer questionAsMdString={question} />
-          <MockIntSessionWhiteboard />
-          {/* <MockIntSessionEditor language="javascript" /> */}
+          {/* <MockIntSessionWhiteboard /> */}
+          <MockIntSessionEditor language="javascript" />
         </SplitPane>
       </SplitPaneWrapper>
     </Flex>

@@ -52,7 +52,7 @@ export default function MockIntSessionEditor({
 
   return (
     <Editor
-      height="100%"
+      // height="100%"
       value={initialEditorValue}
       language={language}
       editorDidMount={onEditorMounted}

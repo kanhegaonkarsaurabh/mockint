@@ -1,10 +1,12 @@
 import React, { useContext } from 'react';
-import { Flex, Box, Heading } from '@chakra-ui/core';
+import { Flex, Box, Heading, Text } from '@chakra-ui/core';
 import EventEmitterContext from './EventEmitterContext';
 import Timer from '../Timer';
+import MockIntSessionSettings from './MockIntSessionSettings';
 
 interface IProps {
   sessionName: string;
+  sessionLanguage: string;
 };
 
 export default function MockIntSessionHeader(props: IProps) {
@@ -25,9 +27,14 @@ export default function MockIntSessionHeader(props: IProps) {
       borderColor="gray.500"
       mb={2}
     >
-      <Heading as="h3" size="lg">
-        {props.sessionName}
-      </Heading>
+      <Flex flexDirection="column">
+            <Heading as="h3" size="md">
+              {props.sessionName}
+            </Heading>
+            <Text fontSize="sm" as="em">
+              Language: {props.sessionLanguage}
+            </Text>
+      </Flex>
       <Flex
         align={['center', 'center', 'center', 'center']}
         justify={['center', 'space-between', 'flex-end', 'flex-end']}
@@ -36,6 +43,7 @@ export default function MockIntSessionHeader(props: IProps) {
       >
         <Timer timeInSeconds={10} onTimerEnd={onMockIntSessionEnd} />
       </Flex>
+      <MockIntSessionSettings />
     </Flex>
   );
 }
