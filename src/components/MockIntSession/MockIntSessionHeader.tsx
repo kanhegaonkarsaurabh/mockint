@@ -3,13 +3,10 @@ import { Flex, Box, Heading, Text } from '@chakra-ui/core';
 import EventEmitterContext from './EventEmitterContext';
 import Timer from '../Timer';
 import MockIntSessionSettings from './MockIntSessionSettings';
+import { useSessionDetails } from './MockIntSessionDetailsContext';
 
-interface IProps {
-  sessionName: string;
-  sessionLanguage: string;
-};
-
-export default function MockIntSessionHeader(props: IProps) {
+export default function MockIntSessionHeader() {
+  const { sessionName, sessionLanguage } = useSessionDetails();
   const eventEmitter = useContext(EventEmitterContext);
 
   const onMockIntSessionEnd = (): void => {
@@ -28,12 +25,12 @@ export default function MockIntSessionHeader(props: IProps) {
       mb={2}
     >
       <Flex flexDirection="column">
-            <Heading as="h3" size="md">
-              {props.sessionName}
-            </Heading>
-            <Text fontSize="sm" as="em">
-              Language: {props.sessionLanguage}
-            </Text>
+        <Heading as="h3" size="md">
+          {sessionName}
+        </Heading>
+        <Text fontSize="sm" as="em">
+          Language: {sessionLanguage}
+        </Text>
       </Flex>
       <Flex
         align={['center', 'center', 'center', 'center']}

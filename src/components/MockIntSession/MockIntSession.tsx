@@ -18,6 +18,10 @@ import MockIntSessionHeader from './MockIntSessionHeader';
 import MockIntSessionWhiteboard from './MockIntSessionWhiteboard';
 import MockIntSessionEditor from './MockIntSessionEditor';
 import EventEmitterContext from './EventEmitterContext';
+import {
+  SessionDetails,
+  SessionDetailsContext,
+} from './MockIntSessionDetailsContext';
 
 const SplitPaneWrapper = styled(Box)({
   height: '60%',
@@ -25,35 +29,46 @@ const SplitPaneWrapper = styled(Box)({
 });
 
 const MockIntSession: React.FunctionComponent<{}> = () => {
-  const [question, setQuestion] = useState<string>('');
+  const [sessionDetails, setSessionDetails] = useState<SessionDetails>({
+    sessionName: 'My-Awesome-Session',
+    sessionLanguage: 'javascript',
+    sessionTime: 10,
+    sessionQuestion: ''
+  });
+
+  // update the question from markdown file
   useEffect(() => {
     fetch(mockQuestion)
       .then((ques) => ques.text())
-      .then((quesText) => setQuestion(quesText));
+      .then((quesText) =>
+        setSessionDetails({
+          ...sessionDetails,
+          sessionQuestion: quesText,
+        }),
+      );
   });
 
   return (
-    <Flex direction="column">
-      <MockIntSessionHeader
-        sessionName="My-Awesome-Session"
-        sessionLanguage="javascript"
-      />
-      <SplitPaneWrapper>
-        <SplitPane
-          split="vertical"
-          minSize={300}
-          defaultSize={300}
-          className="primary"
-          allowResize={true}
-          primary="first"
-          pane1Style={{ overflowY: 'auto' }} // to get scrollable questions
-        >
-          <MockIntQuestionRenderer questionAsMdString={question} />
-          {/* <MockIntSessionWhiteboard /> */}
-          <MockIntSessionEditor language="javascript" />
-        </SplitPane>
-      </SplitPaneWrapper>
-    </Flex>
+      <SessionDetailsContext.Provider value={sessionDetails}>
+        <Flex direction="column">
+          <MockIntSessionHeader />
+          <SplitPaneWrapper>
+            <SplitPane
+              split="vertical"
+              minSize={300}
+              defaultSize={300}
+              className="primary"
+              allowResize={true}
+              primary="first"
+              pane1Style={{ overflowY: 'auto' }} // to get scrollable questions
+            >
+              <MockIntQuestionRenderer />
+              {/* <MockIntSessionWhiteboard /> */}
+              <MockIntSessionEditor />
+            </SplitPane>
+          </SplitPaneWrapper>
+        </Flex>
+      </SessionDetailsContext.Provider>
   );
 };
 

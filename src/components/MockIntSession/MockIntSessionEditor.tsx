@@ -6,14 +6,11 @@ import React, {
 } from 'react';
 import Editor from '@monaco-editor/react';
 import EventEmitterContext from './EventEmitterContext';
+import { useSessionDetails } from './MockIntSessionDetailsContext';
 
-export interface EditorProps {
-  language: string;
-}
 
-export default function MockIntSessionEditor({
-  language,
-}: EditorProps) {
+export default function MockIntSessionEditor() {
+  const { sessionLanguage } = useSessionDetails();
   const eventEmitter = useContext(EventEmitterContext);
   // when a mock int session ends, clear the cached editorvalues
   eventEmitter.on('mockIntSessionEnd', (): void => {
@@ -54,7 +51,7 @@ export default function MockIntSessionEditor({
     <Editor
       // height="100%"
       value={initialEditorValue}
-      language={language}
+      language={sessionLanguage}
       editorDidMount={onEditorMounted}
       options={{
         quickSuggestions: false,
