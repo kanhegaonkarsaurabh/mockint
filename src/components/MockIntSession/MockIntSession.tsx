@@ -62,18 +62,18 @@ const MockIntSession: React.FunctionComponent<{}> = () => {
 
   return (
     <SessionDetailsContext.Provider value={sessionDetails}>
-      <CurrentModeContext.Provider 
-        value={{mode, toggleMode: setMode}}
+      <CurrentModeContext.Provider
+        value={{ mode, toggleMode: setMode }}
       >
         <Flex direction="column">
           <MockIntSessionHeader />
           <SplitPaneWrapper>
             <SplitPane
               split="vertical"
-              minSize={300}
-              defaultSize={300}
+              minSize={500}
+              defaultSize={500}
               className="primary"
-              allowResize={true}
+              allowResize={false}
               primary="first"
               pane1Style={{ overflowY: 'auto' }} // to get scrollable questions
             >
