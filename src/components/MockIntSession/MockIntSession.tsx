@@ -23,19 +23,24 @@ import {
   SessionDetailsContext,
 } from './MockIntSessionDetailsContext';
 
+import { CurrentModeContext } from './CurrentModeContext';
+
 const SplitPaneWrapper = styled(Box)({
   height: '60%',
   width: '100%',
 });
 
 const MockIntSession: React.FunctionComponent<{}> = () => {
-  const [sessionDetails, setSessionDetails] = useState<SessionDetails>({
+  const [sessionDetails, setSessionDetails] = useState<
+    SessionDetails
+  >({
     sessionName: 'My-Awesome-Session',
     sessionLanguage: 'javascript',
     sessionTime: 10,
-    sessionQuestion: ''
+    sessionQuestion: '',
   });
 
+  const [mode, setMode] = useState<string>('editor');
   // update the question from markdown file
   useEffect(() => {
     fetch(mockQuestion)
@@ -46,10 +51,20 @@ const MockIntSession: React.FunctionComponent<{}> = () => {
           sessionQuestion: quesText,
         }),
       );
-  });
+  }, []);
+
+  let mockIntRightPanel: JSX.Element | null = null;
+  if (mode === 'editor') {
+    mockIntRightPanel = <MockIntSessionEditor />;
+  } else if (mode === 'whiteboard') {
+    mockIntRightPanel = <MockIntSessionWhiteboard />;
+  }
 
   return (
-      <SessionDetailsContext.Provider value={sessionDetails}>
+    <SessionDetailsContext.Provider value={sessionDetails}>
+      <CurrentModeContext.Provider 
+        value={{mode, toggleMode: setMode}}
+      >
         <Flex direction="column">
           <MockIntSessionHeader />
           <SplitPaneWrapper>
@@ -63,12 +78,12 @@ const MockIntSession: React.FunctionComponent<{}> = () => {
               pane1Style={{ overflowY: 'auto' }} // to get scrollable questions
             >
               <MockIntQuestionRenderer />
-              {/* <MockIntSessionWhiteboard /> */}
-              <MockIntSessionEditor />
+              {mockIntRightPanel}
             </SplitPane>
           </SplitPaneWrapper>
         </Flex>
-      </SessionDetailsContext.Provider>
+      </CurrentModeContext.Provider>
+    </SessionDetailsContext.Provider>
   );
 };
 

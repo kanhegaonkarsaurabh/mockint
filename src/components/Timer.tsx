@@ -86,7 +86,7 @@ const Timer = ({ timeInSeconds, onTimerEnd }: TimerProps) => {
         {formatTime(timeInSeconds - seconds)}
       </Text>
       <Button
-        variantColor={isActive ? 'red' : 'green'}
+        variantColor={isActive ? 'red' : 'teal'}
         onClick={toggle}
         isDisabled={hasTimerEnded}
       >

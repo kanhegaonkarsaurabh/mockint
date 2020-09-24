@@ -5,10 +5,8 @@ type CurrentMode = {
   toggleMode: (newMode: string) => void;
 };
 
-const currentModeContext = createContext<CurrentMode | undefined>(
-  undefined,
-);
+const CurrentModeContext = createContext<CurrentMode>(undefined!);
 
-const useCurrentMode = () => useContext(currentModeContext);
+const useCurrentMode = () => useContext(CurrentModeContext);
 
-export { currentModeContext, useCurrentMode };
+export { CurrentModeContext, useCurrentMode };
