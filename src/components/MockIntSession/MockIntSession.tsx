@@ -3,13 +3,6 @@ import SplitPane from 'react-split-pane';
 import { jsx } from '@emotion/core';
 import styled from '@emotion/styled';
 import { Flex, Box, Heading } from '@chakra-ui/core';
-import {
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-} from '@chakra-ui/core';
 
 import './MockIntSession.css';
 import { MockIntQuestionRenderer } from './MockIntQuestionRenderer';
@@ -17,7 +10,7 @@ import mockQuestion from './mockQuestion.md';
 import MockIntSessionHeader from './MockIntSessionHeader';
 import MockIntSessionWhiteboard from './MockIntSessionWhiteboard';
 import MockIntSessionEditor from './MockIntSessionEditor';
-import EventEmitterContext from './EventEmitterContext';
+
 import {
   SessionDetails,
   SessionDetailsContext,
