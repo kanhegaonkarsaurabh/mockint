@@ -11,10 +11,8 @@ import MockIntSessionHeader from './MockIntSessionHeader';
 import MockIntSessionWhiteboard from './MockIntSessionWhiteboard';
 import MockIntSessionEditor from './MockIntSessionEditor';
 
-import {
-  SessionDetails,
-  SessionDetailsContext,
-} from './MockIntSessionDetailsContext';
+import { SessionDetails } from './MockIntSessionTypes';
+import { SessionDetailsContext } from './MockIntSessionDetailsContext';
 
 import { CurrentModeContext } from './CurrentModeContext';
 

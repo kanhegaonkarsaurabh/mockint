@@ -1,12 +1,5 @@
 import { createContext, useContext } from 'react';
-
-export type SessionDetails = {
-  sessionName: string;
-  sessionLanguage: string;
-  sessionTime: number;
-  sessionQuestion: string;
-};
-
+import { SessionDetails } from './MockIntSessionTypes';
 // non-null assertion operator to give an initial type to the context
 const SessionDetailsContext = createContext<SessionDetails>(
   undefined!,
