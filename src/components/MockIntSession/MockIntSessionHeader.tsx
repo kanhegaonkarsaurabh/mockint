@@ -1,17 +1,13 @@
 import React, { useContext } from 'react';
 import { Flex, Box, Heading, Text } from '@chakra-ui/core';
-import EventEmitterContext from './EventEmitterContext';
 import Timer from '../Timer';
 import MockIntSessionSettings from './MockIntSessionSettings';
 import { useSessionDetails } from './MockIntSessionDetailsContext';
 
 export default function MockIntSessionHeader() {
   const { sessionName, sessionLanguage } = useSessionDetails();
-  const eventEmitter = useContext(EventEmitterContext);
 
-  const onMockIntSessionEnd = (): void => {
-    eventEmitter.emit('mockIntSessionEnd', {});
-  };
+  const onMockIntSessionEnd = (): void => {};
 
   return (
     <Flex

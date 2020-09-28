@@ -8,16 +8,11 @@ import Editor from '@monaco-editor/react';
 import * as Y from 'yjs';
 import { MonacoBinding } from 'y-monaco';
 import { WebrtcProvider } from 'y-webrtc';
-import EventEmitterContext from './EventEmitterContext';
 import { useSessionDetails } from './MockIntSessionDetailsContext';
 
 
 export default function MockIntSessionEditor() {
   const { sessionLanguage } = useSessionDetails();
-  const eventEmitter = useContext(EventEmitterContext);
-  // when a mock int session ends, clear the cached editorvalues
-  eventEmitter.on('mockIntSessionEnd', (): void => {
-  });
 
   const [monacoEditor, setMonacoEditor] = useState(null);
   const onEditorMounted = (_: any, editor: any): void => {
