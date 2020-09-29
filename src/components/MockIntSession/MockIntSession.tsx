@@ -3,6 +3,7 @@ import SplitPane from 'react-split-pane';
 import { jsx } from '@emotion/core';
 import styled from '@emotion/styled';
 import { Flex, Box, Heading } from '@chakra-ui/core';
+import { useParams } from 'react-router-dom';
 
 import './MockIntSession.css';
 import { MockIntQuestionRenderer } from './MockIntQuestionRenderer';
@@ -21,11 +22,19 @@ const SplitPaneWrapper = styled(Box)({
   width: '100%',
 });
 
-const MockIntSession: React.FunctionComponent<{}> = () => {
+type URLParamType = {
+  sessionName: string;
+};
+
+const MockIntSession: React.FunctionComponent<Record<
+  string,
+  unknown
+>> = () => {
+  const { sessionName } = useParams<URLParamType>();
   const [sessionDetails, setSessionDetails] = useState<
     SessionDetails
   >({
-    sessionName: 'My-Awesome-Session',
+    sessionName,
     sessionLanguage: 'javascript',
     sessionTime: 10,
     sessionQuestion: '',
