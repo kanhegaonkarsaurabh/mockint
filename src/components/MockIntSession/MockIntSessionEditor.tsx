@@ -1,15 +1,19 @@
-import React, {
-  useState,
-  useEffect,
-} from 'react';
+import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import * as Y from 'yjs';
 import { MonacoBinding } from 'y-monaco';
 import { WebrtcProvider } from 'y-webrtc';
 import { useSessionDetails } from './MockIntSessionDetailsContext';
+import MockIntYj from './MockIntYjs';
 
-export default function MockIntSessionEditor() {
-  const { sessionLanguage, sessionName } = useSessionDetails();
+type EditorProps = {
+  yjsInstance: MockIntYj;
+};
+
+const MockIntSessionEditor: React.FC<EditorProps> = ({
+  yjsInstance,
+}: EditorProps) => {
+  const { sessionLanguage } = useSessionDetails();
 
   const [monacoEditor, setMonacoEditor] = useState(null);
   const onEditorMounted = (_: any, editor: any): void => {
@@ -23,29 +27,22 @@ export default function MockIntSessionEditor() {
       return () => {};
     }
 
-    // initialize yjs and shared data bindings
-    const ydoc = new Y.Doc();
-    // @ts-ignore
-    const provider = new WebrtcProvider(sessionName, ydoc, {
-      signaling: ['ws://localhost:4444'],
-    });
-    const type = ydoc.getText('monaco');
+    const type = yjsInstance.ydoc.getText('monaco');
+    const yjsProvider = yjsInstance.provider;
 
     const monacoBinding = new MonacoBinding(
       type,
       // @ts-ignore: Object is possibly 'null'.
       monacoEditor.getModel(),
       new Set([monacoEditor]),
-      provider.awareness,
+      yjsProvider.awareness,
     );
 
-    provider.connect();
+    yjsProvider.connect();
 
     return () => {
-      provider.disconnect();
-      provider.destroy();
     };
-  }, [sessionName, monacoEditor]);
+  }, [yjsInstance, monacoEditor]);
 
   return (
     <Editor
@@ -57,4 +54,6 @@ export default function MockIntSessionEditor() {
       }}
     />
   );
-}
+};
+
+export default MockIntSessionEditor;

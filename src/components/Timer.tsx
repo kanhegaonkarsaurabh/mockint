@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Text, Flex, Button } from '@chakra-ui/core';
+import MockIntYj from './MockIntSession/MockIntYjs';
 
 type TimerProps = {
   timeInSeconds: number;
   onTimerEnd: () => void;
+  yjsInstance: MockIntYj;
 };
 
 const formatTime = (timeInSec: number): string => {
@@ -14,9 +16,21 @@ const formatTime = (timeInSec: number): string => {
   return `${getMinutes} : ${getSeconds}`;
 };
 
-const Timer = ({ timeInSeconds, onTimerEnd }: TimerProps) => {
+const Timer = ({
+  timeInSeconds,
+  onTimerEnd,
+  yjsInstance,
+}: TimerProps) => {
+  const timerSharedMap = yjsInstance.ydoc.getMap('mockint-timer');
+  const hasSharedTimerStarted = timerSharedMap.get('timerStarted');
   const [seconds, setSeconds] = useState(0);
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(hasSharedTimerStarted);
+
+  // observe for any events on the shared timer
+  timerSharedMap.observe((ev) => {
+    setIsActive(timerSharedMap.get('timerStarted'));
+  });
+
   const [hasTimerEnded, sethasTimerEnded] = useState(false);
   const [
     timerInterval,
@@ -24,7 +38,7 @@ const Timer = ({ timeInSeconds, onTimerEnd }: TimerProps) => {
   ] = useState<NodeJS.Timeout | null>(null);
 
   function toggle() {
-    setIsActive(!isActive);
+    timerSharedMap.set('timerStarted', !isActive);
   }
 
   useEffect(() => {
@@ -39,7 +53,7 @@ const Timer = ({ timeInSeconds, onTimerEnd }: TimerProps) => {
     // if time limit recahed, end the session
     if (hasTimerEnded) {
       onTimerEnd();
-      
+
       if (timerInterval == null) {
         return;
       }

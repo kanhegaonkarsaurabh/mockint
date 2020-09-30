@@ -16,6 +16,7 @@ import { SessionDetails } from './MockIntSessionTypes';
 import { SessionDetailsContext } from './MockIntSessionDetailsContext';
 
 import { CurrentModeContext } from './CurrentModeContext';
+import MockIntYj from './MockIntYjs';
 
 const SplitPaneWrapper = styled(Box)({
   height: '60%',
@@ -41,6 +42,17 @@ const MockIntSession: React.FunctionComponent<Record<
   });
 
   const [mode, setMode] = useState<string>('editor');
+
+  // declare an instance of yjs here at the root of mock int session
+  const [yjsInstance, setYjsInstance] = useState<MockIntYj>(
+    new MockIntYj(sessionName),
+  );
+
+  const cleanupYjs = () => {
+    yjsInstance.provider.disconnect();
+    yjsInstance.provider.destroy();
+  };
+
   // update the question from markdown file
   useEffect(() => {
     fetch(mockQuestion)
@@ -51,11 +63,15 @@ const MockIntSession: React.FunctionComponent<Record<
           sessionQuestion: quesText,
         }),
       );
+
+    return cleanupYjs;
   }, []);
 
   let mockIntRightPanel: JSX.Element | null = null;
   if (mode === 'editor') {
-    mockIntRightPanel = <MockIntSessionEditor />;
+    mockIntRightPanel = (
+      <MockIntSessionEditor yjsInstance={yjsInstance} />
+    );
   } else if (mode === 'whiteboard') {
     mockIntRightPanel = <MockIntSessionWhiteboard />;
   }
@@ -66,7 +82,7 @@ const MockIntSession: React.FunctionComponent<Record<
         value={{ mode, toggleMode: setMode }}
       >
         <Flex direction="column">
-          <MockIntSessionHeader />
+          <MockIntSessionHeader yjsInstance={yjsInstance} />
           <SplitPaneWrapper>
             <SplitPane
               split="vertical"

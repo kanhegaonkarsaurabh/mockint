@@ -3,8 +3,15 @@ import { Flex, Box, Heading, Text } from '@chakra-ui/core';
 import Timer from '../Timer';
 import MockIntSessionSettings from './MockIntSessionSettings';
 import { useSessionDetails } from './MockIntSessionDetailsContext';
+import MockIntYj from './MockIntYjs';
 
-export default function MockIntSessionHeader() {
+type HeaderProps = {
+  yjsInstance: MockIntYj;
+};
+
+const MockIntSessionHeader: React.FC<HeaderProps> = ({
+  yjsInstance,
+}: HeaderProps) => {
   const { sessionName, sessionLanguage } = useSessionDetails();
 
   const onMockIntSessionEnd = (): void => {};
@@ -25,7 +32,8 @@ export default function MockIntSessionHeader() {
           {sessionName}
         </Heading>
         <Text fontSize="sm" as="em">
-          Language: {sessionLanguage}
+          Language:
+          {sessionLanguage}
         </Text>
       </Flex>
       <Flex
@@ -34,9 +42,15 @@ export default function MockIntSessionHeader() {
         direction={['column', 'row', 'row', 'row']}
         pt={[4, 4, 0, 0]}
       >
-        <Timer timeInSeconds={10} onTimerEnd={onMockIntSessionEnd} />
+        <Timer
+          timeInSeconds={10}
+          onTimerEnd={onMockIntSessionEnd}
+          yjsInstance={yjsInstance}
+        />
       </Flex>
       <MockIntSessionSettings />
     </Flex>
   );
-}
+};
+
+export default MockIntSessionHeader;
