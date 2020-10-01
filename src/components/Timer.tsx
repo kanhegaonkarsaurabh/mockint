@@ -5,7 +5,6 @@ import MockIntYj from './MockIntSession/MockIntYjs';
 type TimerProps = {
   timeInSeconds: number;
   onTimerEnd: () => void;
-  yjsInstance: MockIntYj;
 };
 
 const formatTime = (timeInSec: number): string => {
@@ -16,29 +15,21 @@ const formatTime = (timeInSec: number): string => {
   return `${getMinutes} : ${getSeconds}`;
 };
 
-const Timer = ({
+const Timer: React.FC<TimerProps> = ({
   timeInSeconds,
   onTimerEnd,
-  yjsInstance,
 }: TimerProps) => {
-  const timerSharedMap = yjsInstance.ydoc.getMap('mockint-timer');
-  const hasSharedTimerStarted = timerSharedMap.get('timerStarted');
   const [seconds, setSeconds] = useState(0);
-  const [isActive, setIsActive] = useState(hasSharedTimerStarted);
-
-  // observe for any events on the shared timer
-  timerSharedMap.observe((ev) => {
-    setIsActive(timerSharedMap.get('timerStarted'));
-  });
-
+  const [isActive, setIsActive] = useState(false);
   const [hasTimerEnded, sethasTimerEnded] = useState(false);
+  
   const [
     timerInterval,
     setTimerInterval,
   ] = useState<NodeJS.Timeout | null>(null);
 
   function toggle() {
-    timerSharedMap.set('timerStarted', !isActive);
+    setIsActive(!isActive);
   }
 
   useEffect(() => {
@@ -67,8 +58,8 @@ const Timer = ({
 
     if (isActive) {
       // set the interval and update seconds state regularly
-      let interval = setInterval(() => {
-        setSeconds((seconds) => seconds + 1);
+      const interval = setInterval(() => {
+        setSeconds((sec) => sec + 1);
       }, 1000);
 
       setTimerInterval(interval);
@@ -94,6 +85,15 @@ const Timer = ({
     sethasTimerEnded(true);
   }
 
+  let timerBtnStatus: string;
+  if (hasTimerEnded) {
+    timerBtnStatus = 'Session Ended';
+  } else if (isActive) {
+    timerBtnStatus = 'End Session';
+  } else {
+    timerBtnStatus = 'Start Session';
+  }
+
   return (
     <Flex direction="row">
       <Text fontSize="2xl" mr={3} verticalAlign="center">
@@ -104,11 +104,7 @@ const Timer = ({
         onClick={toggle}
         isDisabled={hasTimerEnded}
       >
-        {hasTimerEnded
-          ? 'Session Ended'
-          : isActive
-          ? 'End Session'
-          : 'Start Session'}
+        {timerBtnStatus}
       </Button>
     </Flex>
   );

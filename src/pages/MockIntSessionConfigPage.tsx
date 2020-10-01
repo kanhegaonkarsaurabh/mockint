@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/core';
 import styled from '@emotion/styled';
 // import { SessionDetails } from '../components/MockIntSession/MockIntSessionTypes';
+import MockIntQuestionConfigTab from '../components/MockIntConfig/MockIntQuestionConfigTab';
 
 const ConfigPageContainerWrapper = styled(Box)`
   position: fixed;
@@ -52,7 +53,7 @@ const MockIntSessionConfigPage = () => {
                   <p>one!</p>
                 </TabPanel>
                 <TabPanel>
-                  <p>two!</p>
+                  <MockIntQuestionConfigTab />
                 </TabPanel>
               </TabPanels>
             </Tabs>

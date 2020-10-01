@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import SplitPane from 'react-split-pane';
-import { jsx } from '@emotion/core';
 import styled from '@emotion/styled';
-import { Flex, Box, Heading } from '@chakra-ui/core';
+import { Flex, Box } from '@chakra-ui/core';
 import { useParams } from 'react-router-dom';
 
 import './MockIntSession.css';
-import { MockIntQuestionRenderer } from './MockIntQuestionRenderer';
+import MockIntQuestionRenderer from '../MockIntQuestionRenderer';
 import mockQuestion from './mockQuestion.md';
 import MockIntSessionHeader from './MockIntSessionHeader';
 import MockIntSessionWhiteboard from './MockIntSessionWhiteboard';
@@ -44,11 +43,14 @@ const MockIntSession: React.FunctionComponent<Record<
   const [mode, setMode] = useState<string>('editor');
 
   // declare an instance of yjs here at the root of mock int session
-  const [yjsInstance, setYjsInstance] = useState<MockIntYj>(
-    new MockIntYj(sessionName),
+  const [yjsInstance, setYjsInstance] = useState<MockIntYj | null>(
+    null,
   );
 
   const cleanupYjs = () => {
+    if (yjsInstance == null) {
+      return;
+    }
     yjsInstance.provider.disconnect();
     yjsInstance.provider.destroy();
   };
@@ -63,6 +65,9 @@ const MockIntSession: React.FunctionComponent<Record<
           sessionQuestion: quesText,
         }),
       );
+
+    // set the instance of yjs instance
+    setYjsInstance(new MockIntYj(sessionName));
 
     return cleanupYjs;
   }, []);
@@ -93,7 +98,9 @@ const MockIntSession: React.FunctionComponent<Record<
               primary="first"
               pane1Style={{ overflowY: 'auto' }} // to get scrollable questions
             >
-              <MockIntQuestionRenderer />
+              <MockIntQuestionRenderer
+                sessionQuestion={sessionDetails.sessionQuestion}
+              />
               {mockIntRightPanel}
             </SplitPane>
           </SplitPaneWrapper>

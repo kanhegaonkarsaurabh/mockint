@@ -6,7 +6,7 @@ import { useSessionDetails } from './MockIntSessionDetailsContext';
 import MockIntYj from './MockIntYjs';
 
 type HeaderProps = {
-  yjsInstance: MockIntYj;
+  yjsInstance: MockIntYj | null;
 };
 
 const MockIntSessionHeader: React.FC<HeaderProps> = ({
@@ -42,11 +42,7 @@ const MockIntSessionHeader: React.FC<HeaderProps> = ({
         direction={['column', 'row', 'row', 'row']}
         pt={[4, 4, 0, 0]}
       >
-        <Timer
-          timeInSeconds={10}
-          onTimerEnd={onMockIntSessionEnd}
-          yjsInstance={yjsInstance}
-        />
+        <Timer timeInSeconds={10} onTimerEnd={onMockIntSessionEnd} />
       </Flex>
       <MockIntSessionSettings />
     </Flex>

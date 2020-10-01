@@ -7,7 +7,7 @@ import { useSessionDetails } from './MockIntSessionDetailsContext';
 import MockIntYj from './MockIntYjs';
 
 type EditorProps = {
-  yjsInstance: MockIntYj;
+  yjsInstance: MockIntYj | null;
 };
 
 const MockIntSessionEditor: React.FC<EditorProps> = ({
@@ -22,7 +22,7 @@ const MockIntSessionEditor: React.FC<EditorProps> = ({
 
   // when the editor is mounted, connect yjs to webrtc room
   useEffect(() => {
-    if (monacoEditor == null) {
+    if (monacoEditor == null || yjsInstance == null) {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       return () => {};
     }
