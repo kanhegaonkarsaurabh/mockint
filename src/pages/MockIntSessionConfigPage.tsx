@@ -44,16 +44,15 @@ const MockIntSessionConfigPage = () => {
           <Flex mt={6}>
             <Tabs variant="soft-rounded" variantColor="teal">
               <TabList>
-                <Tab>Session Info</Tab>
                 <Tab>Question</Tab>
                 <Tab>Whiteboard</Tab>
               </TabList>
               <TabPanels>
                 <TabPanel>
-                  <p>one!</p>
+                  <MockIntQuestionConfigTab />
                 </TabPanel>
                 <TabPanel>
-                  <MockIntQuestionConfigTab />
+                  <p>one!</p>
                 </TabPanel>
               </TabPanels>
             </Tabs>
