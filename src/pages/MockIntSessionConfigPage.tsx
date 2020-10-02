@@ -8,6 +8,8 @@ import {
   TabList,
   TabPanels,
   TabPanel,
+  Button,
+  ButtonGroup,
 } from '@chakra-ui/core';
 import styled from '@emotion/styled';
 // import { SessionDetails } from '../components/MockIntSession/MockIntSessionTypes';
@@ -37,10 +39,8 @@ const MockIntSessionConfigPage = () => {
   return (
     <ConfigPageContainerWrapper>
       <ConfigPageContainer>
-        <Flex flexDirection="column">
-          <Heading size="lg" ml={3}>
-            My-Awesome-Session Settings
-          </Heading>
+        <Flex flexDirection="column" ml={3}>
+          <Heading size="lg">My-Awesome-Session Settings</Heading>
           <Flex mt={6}>
             <Tabs variant="soft-rounded" variantColor="teal">
               <TabList>
@@ -58,6 +58,20 @@ const MockIntSessionConfigPage = () => {
               </TabPanels>
             </Tabs>
           </Flex>
+          <ButtonGroup spacing={4} mt={5}>
+            <Button
+              variantColor="teal"
+              variant="outline"
+              maxWidth={70}
+            >
+              Save
+            </Button>
+            <Button 
+              variantColor="teal"
+            >
+              Go to session
+            </Button>
+          </ButtonGroup>
         </Flex>
       </ConfigPageContainer>
     </ConfigPageContainerWrapper>
