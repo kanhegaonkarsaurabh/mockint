@@ -9,11 +9,13 @@ import {
   Select,
   Stack,
 } from '@chakra-ui/core';
+import { createSessionInDb } from '../data/firebase';
+import { SessionData } from './MockIntSession/MockIntSessionTypes';
 
 type CreateSessionInputs = {
   sessionName: string;
   sessionLanguage: string;
-  sessionDuration: number;
+  sessionTime: number;
 };
 
 export default function CreateSessionForm() {
@@ -59,12 +61,25 @@ export default function CreateSessionForm() {
     return error || true;
   }
 
-  function onSubmit(sessionData: any) {
-    console.log('send session data to firestore: ', sessionData);
+  async function onSubmit(data: any) {
+    try {
+      const sessionCreated = await createSessionInDb({
+        ...data,
+        sessionQuestion: null,
+        sessionWhiteboardBase: null,
+      } as SessionData);
+      console.log(sessionCreated);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form
+      onSubmit={handleSubmit((data: any) =>
+        onSubmit(data),
+      )}
+    >
       <Stack spacing={3} width={300}>
         <FormControl isInvalid={errors.sessionName ? true : false}>
           <FormLabel htmlFor="name">Unique Session Name</FormLabel>
@@ -98,11 +113,11 @@ export default function CreateSessionForm() {
           </FormErrorMessage>
         </FormControl>
         <FormControl
-          isInvalid={errors.sessionDuration ? true : false}
+          isInvalid={errors.sessionTime ? true : false}
         >
           <FormLabel htmlFor="duration">Session Duration</FormLabel>
           <Select
-            name="sessionDuration"
+            name="sessionTime"
             placeholder="Select Duration"
             ref={register({ validate: validateLanguage })}
           >
@@ -112,7 +127,7 @@ export default function CreateSessionForm() {
             <option value={75}>75 minutes</option>
           </Select>
           <FormErrorMessage>
-            {errors.sessionDuration && errors.sessionDuration.message}
+            {errors.sessionTime && errors.sessionTime.message}
           </FormErrorMessage>
         </FormControl>
         <Button

@@ -11,7 +11,7 @@ import MockIntSessionHeader from './MockIntSessionHeader';
 import MockIntSessionWhiteboard from './MockIntSessionWhiteboard';
 import MockIntSessionEditor from './MockIntSessionEditor';
 
-import { SessionDetails } from './MockIntSessionTypes';
+import { SessionData } from './MockIntSessionTypes';
 import { SessionDetailsContext } from './MockIntSessionDetailsContext';
 
 import { CurrentModeContext } from './CurrentModeContext';
@@ -32,12 +32,13 @@ const MockIntSession: React.FunctionComponent<Record<
 >> = () => {
   const { sessionName } = useParams<URLParamType>();
   const [sessionDetails, setSessionDetails] = useState<
-    SessionDetails
+    SessionData
   >({
     sessionName,
     sessionLanguage: 'javascript',
     sessionTime: 10,
     sessionQuestion: '',
+    sessionWhiteboardBase: '',
   });
 
   const [mode, setMode] = useState<string>('editor');
