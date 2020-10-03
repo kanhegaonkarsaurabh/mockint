@@ -3,7 +3,7 @@ import Editor from '@monaco-editor/react';
 import * as Y from 'yjs';
 import { MonacoBinding } from 'y-monaco';
 import { WebrtcProvider } from 'y-webrtc';
-import { useSessionDetails } from './MockIntSessionDetailsContext';
+import { useSessionData } from '../MockIntSessionDataContext';
 import MockIntYj from './MockIntYjs';
 
 type EditorProps = {
@@ -13,7 +13,7 @@ type EditorProps = {
 const MockIntSessionEditor: React.FC<EditorProps> = ({
   yjsInstance,
 }: EditorProps) => {
-  const { sessionLanguage } = useSessionDetails();
+  const { sessionLanguage } = useSessionData();
 
   const [monacoEditor, setMonacoEditor] = useState(null);
   const onEditorMounted = (_: any, editor: any): void => {

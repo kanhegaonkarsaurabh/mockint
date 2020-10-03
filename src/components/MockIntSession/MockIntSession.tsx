@@ -12,10 +12,11 @@ import MockIntSessionWhiteboard from './MockIntSessionWhiteboard';
 import MockIntSessionEditor from './MockIntSessionEditor';
 
 import { SessionData } from './MockIntSessionTypes';
-import { SessionDetailsContext } from './MockIntSessionDetailsContext';
+import { SessionDataContext } from '../MockIntSessionDataContext';
 
 import { CurrentModeContext } from './CurrentModeContext';
 import MockIntYj from './MockIntYjs';
+import { FirebaseStoredSession } from '../../data/firebase';
 
 const SplitPaneWrapper = styled(Box)({
   height: '60%',
@@ -32,13 +33,13 @@ const MockIntSession: React.FunctionComponent<Record<
 >> = () => {
   const { sessionName } = useParams<URLParamType>();
   const [sessionDetails, setSessionDetails] = useState<
-    SessionData
+    FirebaseStoredSession
   >({
-    sessionName,
     sessionLanguage: 'javascript',
     sessionTime: 10,
     sessionQuestion: '',
     sessionWhiteboardBase: '',
+    createdAt: Date.now(),
   });
 
   const [mode, setMode] = useState<string>('editor');
@@ -83,7 +84,7 @@ const MockIntSession: React.FunctionComponent<Record<
   }
 
   return (
-    <SessionDetailsContext.Provider value={sessionDetails}>
+    <SessionDataContext.Provider value={sessionDetails}>
       <CurrentModeContext.Provider
         value={{ mode, toggleMode: setMode }}
       >
@@ -107,7 +108,7 @@ const MockIntSession: React.FunctionComponent<Record<
           </SplitPaneWrapper>
         </Flex>
       </CurrentModeContext.Provider>
-    </SessionDetailsContext.Provider>
+    </SessionDataContext.Provider>
   );
 };
 

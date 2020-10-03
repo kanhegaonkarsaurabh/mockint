@@ -3,7 +3,6 @@ import ReactMarkdown from 'react-markdown';
 import { Flex } from '@chakra-ui/core';
 import ChakraUIRenderer from 'chakra-ui-markdown-renderer';
 import './MockIntQuestionRenderer.css';
-import { useSessionDetails } from './MockIntSession/MockIntSessionDetailsContext';
 
 type QuestionRendererProps = {
   sessionQuestion: string;

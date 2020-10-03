@@ -2,8 +2,9 @@ import React, { useContext } from 'react';
 import { Flex, Box, Heading, Text } from '@chakra-ui/core';
 import Timer from '../Timer';
 import MockIntSessionSettings from './MockIntSessionSettings';
-import { useSessionDetails } from './MockIntSessionDetailsContext';
+import { useSessionData } from '../MockIntSessionDataContext';
 import MockIntYj from './MockIntYjs';
+import { useParams } from 'react-router-dom';
 
 type HeaderProps = {
   yjsInstance: MockIntYj | null;
@@ -12,7 +13,8 @@ type HeaderProps = {
 const MockIntSessionHeader: React.FC<HeaderProps> = ({
   yjsInstance,
 }: HeaderProps) => {
-  const { sessionName, sessionLanguage } = useSessionDetails();
+  const { sessionName } = useParams<{ sessionName: string }>();
+  const { sessionLanguage } = useSessionData();
 
   const onMockIntSessionEnd = (): void => {};
 

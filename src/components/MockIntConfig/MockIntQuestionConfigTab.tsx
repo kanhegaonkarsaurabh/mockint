@@ -4,13 +4,15 @@ import { Box, Text } from '@chakra-ui/core';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import MockIntQuestionRenderer from '../MockIntQuestionRenderer';
 
-type QuestionTabProps = {};
+type QuestionTabProps = {
+  onQuestionChange: (editorVal: string) => void;
+  questionValue: string;
+};
 
-const MockIntQuestionTab: React.FC<QuestionTabProps> = () => {
-  const [questionValue, setQuestionValue] = React.useState<string>(
-    '## Question',
-  );
-
+const MockIntQuestionTab: React.FC<QuestionTabProps> = ({
+  onQuestionChange,
+  questionValue,
+}: QuestionTabProps) => {
   const [selectedTab, setSelectedTab] = React.useState<
     'write' | 'preview'
   >('write');
@@ -20,7 +22,7 @@ const MockIntQuestionTab: React.FC<QuestionTabProps> = () => {
       <Box mt={5}>
         <ReactMde
           value={questionValue}
-          onChange={setQuestionValue}
+          onChange={onQuestionChange}
           selectedTab={selectedTab}
           onTabChange={setSelectedTab}
           generateMarkdownPreview={
