@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Text, Flex, Button } from '@chakra-ui/core';
 import MockIntYj from './MockIntSession/MockIntYjs';
+import { createTimerinSessionInDb } from '../data/firebase';
+import { useParams } from 'react-router-dom';
 
 type TimerProps = {
   timeInSeconds: number;
@@ -19,6 +21,7 @@ const Timer: React.FC<TimerProps> = ({
   timeInSeconds,
   onTimerEnd,
 }: TimerProps) => {
+  const { sessionName } = useParams<{ sessionName: string }>();
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [hasTimerEnded, sethasTimerEnded] = useState(false);
@@ -28,7 +31,15 @@ const Timer: React.FC<TimerProps> = ({
     setTimerInterval,
   ] = useState<NodeJS.Timeout | null>(null);
 
-  function toggle() {
+  async function toggle() {
+    // starting a session
+    if (!isActive) {
+      const createdTimer = await createTimerinSessionInDb(
+        sessionName,
+      );
+
+      console.log(createdTimer);
+    }
     setIsActive(!isActive);
   }
 
