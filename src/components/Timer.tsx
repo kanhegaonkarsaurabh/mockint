@@ -6,7 +6,10 @@ import {
   CircularProgress,
 } from '@chakra-ui/core';
 import MockIntYj from './MockIntSession/MockIntYjs';
-import { createTimerinSessionInDb, updateEndAtInSessionTimeInDb } from '../data/firebase';
+import {
+  createTimerinSessionInDb,
+  updateEndAtInSessionTimeInDb,
+} from '../data/firebase';
 import { useParams } from 'react-router-dom';
 import useSyncedSessionTimer from './MockIntSession/useSyncedSessionTimer';
 
@@ -31,7 +34,6 @@ const Timer: React.FC<TimerProps> = ({ onTimerEnd }: TimerProps) => {
   );
   const [seconds, setSeconds] = useState(0);
 
-
   const [
     timerInterval,
     setTimerInterval,
@@ -48,7 +50,8 @@ const Timer: React.FC<TimerProps> = ({ onTimerEnd }: TimerProps) => {
           'Failed to create timer in db and start session',
         );
       }
-    } else if (status === 'started') { // ending a session
+    } else if (status === 'started') {
+      // ending a session
       const endedSession = await updateEndAtInSessionTimeInDb(
         sessionName,
         Date.now(),
@@ -64,7 +67,7 @@ const Timer: React.FC<TimerProps> = ({ onTimerEnd }: TimerProps) => {
       clearInterval(timerInterval);
       setTimerInterval(null);
     };
-    
+
     if (status === 'started') {
       // set the interval and update seconds state regularly
       const interval = setInterval(() => {

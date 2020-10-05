@@ -9,7 +9,7 @@ import {
   Select,
   Stack,
 } from '@chakra-ui/core';
-import { createSessionInDb } from '../data/firebase';
+import { createSessionInDb, getAllSessions } from '../data/firebase';
 import { SessionData } from './MockIntSession/MockIntSessionTypes';
 
 type CreateSessionInputs = {
@@ -23,21 +23,31 @@ export default function CreateSessionForm() {
     CreateSessionInputs
   >();
 
+  // NOTE: useRef a hack for react-hook-form: https://bit.ly/33sNP6T
+  const allActiveSessions = React.useRef<Array<string>>();
+
+  React.useEffect(() => {
+    getAllSessions()
+      .then((sessions) => {
+        allActiveSessions.current = sessions;
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
   function validateName(sessionName: string) {
     let error;
     if (!sessionName) {
       error = 'Session Name is required';
       return error;
     }
-
-    let activeSessionNames: string[] = ['saurabh']; // TODO: Fetch from database store
     // check and make sure the session name is not an active session name
-    for (let activeSess of activeSessionNames) {
-      if (sessionName === activeSess) {
-        error = `'${sessionName}' name is already in use`;
+    if (allActiveSessions.current !== undefined) {
+      for (const activeSess of allActiveSessions.current) {
+        if (sessionName === activeSess) {
+          error = `'${sessionName}' name is already in use`;
+        }
       }
     }
-
     return error || true;
   }
 
@@ -70,25 +80,22 @@ export default function CreateSessionForm() {
         sessionQuestion: null,
         sessionWhiteboardBase: null,
       } as SessionData);
-      console.log(sessionCreated);
     } catch (e) {
       console.error(e);
     }
   }
 
   return (
-    <form
-      onSubmit={handleSubmit((data: any) =>
-        onSubmit(data),
-      )}
-    >
+    <form onSubmit={handleSubmit((data: any) => onSubmit(data))}>
       <Stack spacing={3} width={300}>
         <FormControl isInvalid={errors.sessionName ? true : false}>
           <FormLabel htmlFor="name">Unique Session Name</FormLabel>
           <Input
             name="sessionName"
             placeholder="Summer Internship Interview"
-            ref={register({ validate: validateName })}
+            ref={register({
+              validate: validateName,
+            })}
           />
           <FormErrorMessage>
             {errors.sessionName && errors.sessionName.message}
@@ -114,14 +121,12 @@ export default function CreateSessionForm() {
             {errors.sessionLanguage && errors.sessionLanguage.message}
           </FormErrorMessage>
         </FormControl>
-        <FormControl
-          isInvalid={errors.sessionTime ? true : false}
-        >
+        <FormControl isInvalid={errors.sessionTime ? true : false}>
           <FormLabel htmlFor="duration">Session Duration</FormLabel>
           <Select
             name="sessionTime"
             placeholder="Select Duration"
-            ref={register({ validate: validateLanguage })}
+            ref={register({ validate: validateDuration })}
           >
             <option value={30}>30 minutes</option>
             <option value={45}>45 minutes</option>
