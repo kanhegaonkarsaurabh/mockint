@@ -1,10 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Flex, Box, Heading, Text } from '@chakra-ui/core';
-import Timer from '../Timer';
+import { useParams } from 'react-router-dom';
 import MockIntSessionSettings from './MockIntSessionSettings';
 import { useSessionData } from '../MockIntSessionDataContext';
 import MockIntYj from './MockIntYjs';
-import { useParams } from 'react-router-dom';
+import FirebaseDataTimerWrapper from '../FirebaseDataTimerWrapper';
+import Timer from '../Timer';
 
 type HeaderProps = {
   yjsInstance: MockIntYj | null;
@@ -17,7 +18,6 @@ const MockIntSessionHeader: React.FC<HeaderProps> = ({
   const { sessionLanguage } = useSessionData();
 
   const onMockIntSessionEnd = (): void => {};
-
   return (
     <Flex
       align="center"
@@ -44,7 +44,7 @@ const MockIntSessionHeader: React.FC<HeaderProps> = ({
         direction={['column', 'row', 'row', 'row']}
         pt={[4, 4, 0, 0]}
       >
-        <Timer timeInSeconds={10} onTimerEnd={onMockIntSessionEnd} />
+        <Timer onTimerEnd={onMockIntSessionEnd} />
       </Flex>
       <MockIntSessionSettings />
     </Flex>

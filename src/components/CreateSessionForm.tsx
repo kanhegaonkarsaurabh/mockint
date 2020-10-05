@@ -62,9 +62,11 @@ export default function CreateSessionForm() {
   }
 
   async function onSubmit(data: any) {
+    const sessTimeInMs = +data.sessionTime * 60 * 1000; // convert minutes to milliseconds
     try {
       const sessionCreated = await createSessionInDb({
         ...data,
+        sessionTime: sessTimeInMs,
         sessionQuestion: null,
         sessionWhiteboardBase: null,
       } as SessionData);

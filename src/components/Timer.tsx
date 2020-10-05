@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Flex, Button } from '@chakra-ui/core';
+import {
+  Text,
+  Flex,
+  Button,
+  CircularProgress,
+} from '@chakra-ui/core';
 import MockIntYj from './MockIntSession/MockIntYjs';
-import { createTimerinSessionInDb } from '../data/firebase';
+import { createTimerinSessionInDb, updateEndAtInSessionTimeInDb } from '../data/firebase';
 import { useParams } from 'react-router-dom';
+import useSyncedSessionTimer from './MockIntSession/useSyncedSessionTimer';
 
 type TimerProps = {
-  timeInSeconds: number;
   onTimerEnd: () => void;
 };
 
@@ -17,15 +22,16 @@ const formatTime = (timeInSec: number): string => {
   return `${getMinutes} : ${getSeconds}`;
 };
 
-const Timer: React.FC<TimerProps> = ({
-  timeInSeconds,
-  onTimerEnd,
-}: TimerProps) => {
+const Timer: React.FC<TimerProps> = ({ onTimerEnd }: TimerProps) => {
   const { sessionName } = useParams<{ sessionName: string }>();
+
+  // initialize custom in-sync timer hook
+  const { timeInSeconds, status } = useSyncedSessionTimer(
+    sessionName,
+  );
   const [seconds, setSeconds] = useState(0);
-  const [isActive, setIsActive] = useState(false);
-  const [hasTimerEnded, sethasTimerEnded] = useState(false);
-  
+
+
   const [
     timerInterval,
     setTimerInterval,
@@ -33,14 +39,21 @@ const Timer: React.FC<TimerProps> = ({
 
   async function toggle() {
     // starting a session
-    if (!isActive) {
+    if (status === 'initial') {
       const createdTimer = await createTimerinSessionInDb(
         sessionName,
       );
-
-      console.log(createdTimer);
+      if (!createdTimer) {
+        console.error(
+          'Failed to create timer in db and start session',
+        );
+      }
+    } else if (status === 'started') { // ending a session
+      const endedSession = await updateEndAtInSessionTimeInDb(
+        sessionName,
+        Date.now(),
+      );
     }
-    setIsActive(!isActive);
   }
 
   useEffect(() => {
@@ -51,58 +64,41 @@ const Timer: React.FC<TimerProps> = ({
       clearInterval(timerInterval);
       setTimerInterval(null);
     };
-
-    // if time limit recahed, end the session
-    if (hasTimerEnded) {
-      onTimerEnd();
-
-      if (timerInterval == null) {
-        return;
-      }
-
-      clearInterval(timerInterval);
-      setTimerInterval(null);
-      sethasTimerEnded(true);
-      setIsActive(false);
-      return timerCleanupFn;
-    }
-
-    if (isActive) {
+    
+    if (status === 'started') {
       // set the interval and update seconds state regularly
       const interval = setInterval(() => {
         setSeconds((sec) => sec + 1);
       }, 1000);
 
       setTimerInterval(interval);
-    } else {
-      // end session btn has been clicked
-      if (timerInterval == null) {
-        return;
+    } else if (status === 'ended') {
+      if (timerInterval != null) {
+        clearInterval(timerInterval);
+        setTimerInterval(null);
       }
-
-      clearInterval(timerInterval);
-      setTimerInterval(null);
-      sethasTimerEnded(true);
-      setIsActive(false);
-      return timerCleanupFn;
     }
-
-    // cleanup fn to avoid memory leak once the component unmounts
     return timerCleanupFn;
-  }, [isActive, hasTimerEnded]);
+  }, [status]);
 
-  // session is now over
-  if (!hasTimerEnded && timeInSeconds === seconds) {
-    sethasTimerEnded(true);
+  if (status === 'fetching') {
+    return (
+      <CircularProgress
+        isIndeterminate
+        color="teal"
+        thickness={0.1}
+        size="50px"
+      />
+    );
   }
 
-  let timerBtnStatus: string;
-  if (hasTimerEnded) {
-    timerBtnStatus = 'Session Ended';
-  } else if (isActive) {
-    timerBtnStatus = 'End Session';
-  } else {
+  let timerBtnStatus = '';
+  if (status === 'initial') {
     timerBtnStatus = 'Start Session';
+  } else if (status === 'started') {
+    timerBtnStatus = 'End Session';
+  } else if (status === 'ended') {
+    timerBtnStatus = 'Session Ended';
   }
 
   return (
@@ -111,9 +107,9 @@ const Timer: React.FC<TimerProps> = ({
         {formatTime(timeInSeconds - seconds)}
       </Text>
       <Button
-        variantColor={isActive ? 'red' : 'teal'}
+        variantColor={status === 'started' ? 'red' : 'teal'}
         onClick={toggle}
-        isDisabled={hasTimerEnded}
+        isDisabled={status === 'ended'}
       >
         {timerBtnStatus}
       </Button>

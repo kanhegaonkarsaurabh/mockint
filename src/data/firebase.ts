@@ -10,10 +10,15 @@ export type FirebaseStoredSession = {
   sessionWhiteboardBase: string;
 };
 
-export type onSubscribeSessionTimerCallback = (
-  data: firebase.firestore.DocumentData,
-) => void;
+export type FirebaseSessionTimerData = {
+  startedAt: number;
+  endAt: number;
+};
 
+export type onSubscribeSessionTimerCallback = (
+  timerData: FirebaseSessionTimerData | null,
+  sessionTime: number | null,
+) => void;
 
 const firebaseConfig = JSON.parse(
   process.env.REACT_APP_FIREBASE_CONFIG as string,
@@ -38,7 +43,7 @@ export async function createTimerinSessionInDb(
     const { sessionTime } = sessionData; // session time in milliseconds
 
     const startedAt = Date.now();
-    const timerData = {
+    const timerData: FirebaseSessionTimerData = {
       startedAt,
       endAt: startedAt + sessionTime,
     };
@@ -110,21 +115,45 @@ export async function updateSessionWithQuestionInDb(
   return didUpdate;
 }
 
+export async function updateEndAtInSessionTimeInDb(
+  sessionName: string,
+  newEndTime: number,
+): Promise<boolean> {
+  const db = firebase.firestore();
+  try {
+    const docRef = await db
+      .collection(SESSION_COLLECTION_DB)
+      .doc(sessionName)
+      .update({ 'timer.endAt': newEndTime });
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+  return true;
+}
+
 export function subscribeToSessionTimer(
   sessionName: string,
   onObserveCallback: onSubscribeSessionTimerCallback,
 ): () => void {
-  const SESSION_COLLECTION_TIMER = 'timer';
   const db = firebase.firestore();
   const unsubscribeFn = db
     .collection(SESSION_COLLECTION_DB)
     .doc(sessionName)
-    .collection(SESSION_COLLECTION_TIMER)
     .onSnapshot((snapshot) => {
-      if (snapshot.size) {
-        snapshot.forEach((doc) => onObserveCallback(doc.data()));
+      if (snapshot.data() === null || snapshot.data() === undefined) {
+        onObserveCallback(null, null);
+      } else if (snapshot.data()?.timer) {
+        onObserveCallback(
+          snapshot.data()?.timer as FirebaseSessionTimerData,
+          (snapshot.data() as FirebaseStoredSession).sessionTime,
+        );
+      } else {
+        onObserveCallback(
+          null,
+          (snapshot.data() as FirebaseStoredSession).sessionTime,
+        );
       }
     });
-
   return unsubscribeFn;
 }
