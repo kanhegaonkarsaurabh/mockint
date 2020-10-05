@@ -12,7 +12,7 @@ import {
   ButtonGroup,
 } from '@chakra-ui/core';
 import styled from '@emotion/styled';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 // import { SessionDetails } from '../components/MockIntSession/MockIntSessionTypes';
 import MockIntQuestionConfigTab from '../components/MockIntConfig/MockIntQuestionConfigTab';
 import { SessionDataContext } from '../components/MockIntSessionDataContext';
@@ -43,6 +43,7 @@ const ConfigPageContainer = styled(Box)`
 `;
 
 const MockIntSessionConfigPage = () => {
+  const routerHistory = useHistory();
   const { sessionName } = useParams<{ sessionName: string }>();
   const [
     sessionData,
@@ -133,7 +134,14 @@ const MockIntSessionConfigPage = () => {
                 >
                   Save
                 </Button>
-                <Button variantColor="teal">Go to session</Button>
+                <Button
+                  variantColor="teal"
+                  onClick={() =>
+                    routerHistory.push(`/session/${sessionName}`)
+                  }
+                >
+                  Go to session
+                </Button>
               </ButtonGroup>
             </Flex>
           </ConfigPageContainer>

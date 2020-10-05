@@ -9,6 +9,8 @@ import {
   Select,
   Stack,
 } from '@chakra-ui/core';
+import { useHistory } from 'react-router-dom';
+
 import { createSessionInDb, getAllSessions } from '../data/firebase';
 import { SessionData } from './MockIntSession/MockIntSessionTypes';
 
@@ -22,7 +24,7 @@ export default function CreateSessionForm() {
   const { handleSubmit, errors, register, formState } = useForm<
     CreateSessionInputs
   >();
-
+  const routerHistory = useHistory();
   // NOTE: useRef a hack for react-hook-form: https://bit.ly/33sNP6T
   const allActiveSessions = React.useRef<Array<string>>();
 
@@ -80,6 +82,11 @@ export default function CreateSessionForm() {
         sessionQuestion: null,
         sessionWhiteboardBase: null,
       } as SessionData);
+
+      // session created, redirect them to the config page
+      if (sessionCreated) {
+        routerHistory.push(`/config/${data.sessionName}`);
+      }
     } catch (e) {
       console.error(e);
     }
