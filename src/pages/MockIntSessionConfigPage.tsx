@@ -21,6 +21,8 @@ import {
   updateSessionWithQuestionInDb,
 } from '../data/firebase';
 import { loadSessionFromDb } from '../data/firebase';
+import useReadFirebase from '../data/useReadFirebase';
+import SessionNotFound from '../components/SessionNotFound';
 
 const ConfigPageContainerWrapper = styled(Box)`
   position: fixed;
@@ -46,37 +48,21 @@ const MockIntSessionConfigPage = () => {
   const routerHistory = useHistory();
   const { sessionName } = useParams<{ sessionName: string }>();
   const [
-    sessionData,
-    setSessionData,
-  ] = useState<FirebaseStoredSession | null>(null);
+    status,
+    error,
+    firebaseData,
+  ] = useReadFirebase(loadSessionFromDb, [sessionName]);
+
   const [questionEditorValue, setQuestionEditorValue] = useState('');
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
   useEffect(() => {
-    if (sessionData == null) {
+    if (firebaseData == null) {
       return () => {};
     }
-    const { sessionQuestion } = sessionData;
+    const { sessionQuestion } = firebaseData as FirebaseStoredSession;
     setQuestionEditorValue(sessionQuestion);
-  }, [sessionData]);
-
-  useEffect(() => {
-    async function loadSessionData(sName: string) {
-      // on component load, run the api and fetch the firebase data
-      try {
-        const fetchedData = await loadSessionFromDb(sName);
-        if (fetchedData == null) {
-          return;
-        }
-
-        setSessionData(fetchedData);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
-    loadSessionData(sessionName);
-  }, [sessionName]);
+  }, [firebaseData]);
 
   const updateQuestion = async () => {
     try {
@@ -95,9 +81,13 @@ const MockIntSessionConfigPage = () => {
     setIsSaving(false);
   };
 
-  return (
-    sessionData && (
-      <SessionDataContext.Provider value={sessionData}>
+  if (status === 'fetched' && !firebaseData) {
+    return <SessionNotFound enteredSessionName={sessionName} />;
+  }
+
+  if (status === 'fetched' && firebaseData) {
+    return (
+      <SessionDataContext.Provider value={firebaseData}>
         <ConfigPageContainerWrapper>
           <ConfigPageContainer>
             <Flex flexDirection="column" ml={3}>
@@ -147,8 +137,10 @@ const MockIntSessionConfigPage = () => {
           </ConfigPageContainer>
         </ConfigPageContainerWrapper>
       </SessionDataContext.Provider>
-    )
-  );
+    );
+  }
+
+  return null;
 };
 
 export default MockIntSessionConfigPage;

@@ -158,7 +158,7 @@ export function subscribeToSessionTimer(
   return unsubscribeFn;
 }
 
-export async function getAllSessions(): Promise<Array<string>> {
+export async function getAllSessionNames(): Promise<Array<string>> {
   const db = firebase.firestore();
   const snapshot = await db.collection(SESSION_COLLECTION_DB).get();
   return snapshot.docs.map((doc) => doc.id);

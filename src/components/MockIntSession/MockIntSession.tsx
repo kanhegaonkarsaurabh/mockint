@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import SplitPane from 'react-split-pane';
 import styled from '@emotion/styled';
-import { Flex, Box } from '@chakra-ui/core';
+import {
+  Flex,
+  Box,
+} from '@chakra-ui/core';
 import { useParams } from 'react-router-dom';
 
 import './MockIntSession.css';
 import MockIntQuestionRenderer from '../MockIntQuestionRenderer';
-import mockQuestion from './mockQuestion.md';
 import MockIntSessionHeader from './MockIntSessionHeader';
 import MockIntSessionWhiteboard from './MockIntSessionWhiteboard';
 import MockIntSessionEditor from './MockIntSessionEditor';
@@ -16,7 +18,13 @@ import { SessionDataContext } from '../MockIntSessionDataContext';
 
 import { CurrentModeContext } from './CurrentModeContext';
 import MockIntYj from './MockIntYjs';
-import { FirebaseStoredSession } from '../../data/firebase';
+import {
+  FirebaseStoredSession,
+  loadSessionFromDb,
+} from '../../data/firebase';
+import useReadFirebase from '../../data/useReadFirebase'; 
+import CenterDivWrapper from '../SessionNotFound';
+import SessionNotFound from '../SessionNotFound';
 
 const SplitPaneWrapper = styled(Box)({
   height: '60%',
@@ -27,21 +35,13 @@ type URLParamType = {
   sessionName: string;
 };
 
-const MockIntSession: React.FunctionComponent<Record<
-  string,
-  unknown
->> = () => {
+const MockIntSession: React.FC<{}> = ({children}) => {
   const { sessionName } = useParams<URLParamType>();
-  const [sessionDetails, setSessionDetails] = useState<
-    FirebaseStoredSession
-  >({
-    sessionLanguage: 'javascript',
-    sessionTime: 10,
-    sessionQuestion: '',
-    sessionWhiteboardBase: '',
-    createdAt: Date.now(),
-  });
-
+  const [
+    status,
+    error,
+    firebaseData,
+  ] = useReadFirebase(loadSessionFromDb, [sessionName]);
   const [mode, setMode] = useState<string>('editor');
 
   // declare an instance of yjs here at the root of mock int session
@@ -59,20 +59,12 @@ const MockIntSession: React.FunctionComponent<Record<
 
   // update the question from markdown file
   useEffect(() => {
-    fetch(mockQuestion)
-      .then((ques) => ques.text())
-      .then((quesText) =>
-        setSessionDetails({
-          ...sessionDetails,
-          sessionQuestion: quesText,
-        }),
-      );
-
-    // set the instance of yjs instance
-    setYjsInstance(new MockIntYj(sessionName));
-
+    if (firebaseData) {
+      // set the instance of yjs instance
+      setYjsInstance(new MockIntYj(sessionName));
+    }
     return cleanupYjs;
-  }, []);
+  }, [firebaseData]);
 
   let mockIntRightPanel: JSX.Element | null = null;
   if (mode === 'editor') {
@@ -83,33 +75,46 @@ const MockIntSession: React.FunctionComponent<Record<
     mockIntRightPanel = <MockIntSessionWhiteboard />;
   }
 
-  return (
-    <SessionDataContext.Provider value={sessionDetails}>
-      <CurrentModeContext.Provider
-        value={{ mode, toggleMode: setMode }}
+  // api call has finished and returned null. No session is present
+  if (status === 'fetched' && !firebaseData) {
+    return (
+      <SessionNotFound enteredSessionName={sessionName} />
+    );
+  }
+
+  if (status === 'fetched' && firebaseData) {
+    return (
+      <SessionDataContext.Provider 
+        value={firebaseData as FirebaseStoredSession}
       >
-        <Flex direction="column">
-          <MockIntSessionHeader yjsInstance={yjsInstance} />
-          <SplitPaneWrapper>
-            <SplitPane
-              split="vertical"
-              minSize={500}
-              defaultSize={500}
-              className="primary"
-              allowResize={false}
-              primary="first"
-              pane1Style={{ overflowY: 'auto' }} // to get scrollable questions
-            >
-              <MockIntQuestionRenderer
-                sessionQuestion={sessionDetails.sessionQuestion}
-              />
-              {mockIntRightPanel}
-            </SplitPane>
-          </SplitPaneWrapper>
-        </Flex>
-      </CurrentModeContext.Provider>
-    </SessionDataContext.Provider>
-  );
+        <CurrentModeContext.Provider
+          value={{ mode, toggleMode: setMode }}
+        >
+          <Flex direction="column">
+            <MockIntSessionHeader yjsInstance={yjsInstance} />
+            <SplitPaneWrapper>
+              <SplitPane
+                split="vertical"
+                minSize={500}
+                defaultSize={500}
+                className="primary"
+                allowResize={false}
+                primary="first"
+                pane1Style={{ overflowY: 'auto' }} // to get scrollable questions
+              >
+                <MockIntQuestionRenderer
+                  sessionQuestion={(firebaseData as FirebaseStoredSession).sessionQuestion}
+                />
+                {mockIntRightPanel}
+              </SplitPane>
+            </SplitPaneWrapper>
+          </Flex>
+        </CurrentModeContext.Provider>
+      </SessionDataContext.Provider>
+    );
+  }
+
+  return null;
 };
 
 export default MockIntSession;

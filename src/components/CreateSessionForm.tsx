@@ -11,7 +11,10 @@ import {
 } from '@chakra-ui/core';
 import { useHistory } from 'react-router-dom';
 
-import { createSessionInDb, getAllSessions } from '../data/firebase';
+import {
+  createSessionInDb,
+  getAllSessionNames,
+} from '../data/firebase';
 import { SessionData } from './MockIntSession/MockIntSessionTypes';
 
 type CreateSessionInputs = {
@@ -29,7 +32,7 @@ export default function CreateSessionForm() {
   const allActiveSessions = React.useRef<Array<string>>();
 
   React.useEffect(() => {
-    getAllSessions()
+    getAllSessionNames()
       .then((sessions) => {
         allActiveSessions.current = sessions;
       })
